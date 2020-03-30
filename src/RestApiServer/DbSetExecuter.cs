@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -21,33 +22,51 @@ namespace RestApiServer
 
         public Type EntityType { get; private set; }
 
-        public async Task<object> CreateAsync(object createObject)
+        public async ValueTask<object> CreateAsync(object createObject)
         {
             await _dbContext.AddAsync(createObject);
             await _dbContext.SaveChangesAsync();
             return createObject;
         }
 
-        public Task<object> DeleteAsync(string id)
+        public async ValueTask DeleteAsync(string id)
         {
-            throw new NotImplementedException();
+            var entity = await _dbContext.FindAsync(EntityType, BuildKey(EntityType, id));
+            var entry = _dbContext.Entry(entity);
+            entry.State = EntityState.Deleted;
+            await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<object>> GetCollectionAsync()
+        public async ValueTask<IEnumerable<object>> GetCollectionAsync()
         {
             var set = (IQueryable<object>)_setMethod?.Invoke(_dbContext, null);
             var collection = await set.ToListAsync();
             return collection;
         }
 
-        public async Task<object> GetSingleAsync(string id)
+        public ValueTask<object> GetSingleAsync(string id)
         {
-            var entity = await _dbContext.FindAsync(EntityType, long.Parse(id));
-            return entity;
+            return _dbContext.FindAsync(EntityType, BuildKey(EntityType, id));
         }
 
-        public Task<object> UpdateAsync(string id, object updateObject)
+        public async ValueTask UpdateAsync(string id, object updateObject)
         {
+            var entity = await _dbContext.FindAsync(EntityType, BuildKey(EntityType, id));
+            _dbContext.Entry(entity).CurrentValues.SetValues(updateObject);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        private object BuildKey(Type entity, string id)
+        {
+            var keyNames = _dbContext.Model.FindEntityType(entity).FindPrimaryKey().Properties
+                .Select(x => x.Name);
+
+            if(keyNames.Count() == 1)
+            {
+                var propertyType = entity.GetProperty(keyNames.Single()).PropertyType;
+                return TypeDescriptor.GetConverter(propertyType).ConvertFromInvariantString(id);
+            }
+
             throw new NotImplementedException();
         }
     }

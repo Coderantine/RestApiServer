@@ -7,13 +7,15 @@ namespace RestApiServer
     public interface IDbSetExecuter
     {
         Type EntityType { get; }
-        Task<object> CreateAsync(object createObject);
 
-        Task<object> GetSingleAsync(string id);
-        Task<object> UpdateAsync(string id, object updateObject);
+        ValueTask<object> CreateAsync(object createObject);
 
-        Task<IEnumerable<object>> GetCollectionAsync();
+        ValueTask<object> GetSingleAsync(string id);
 
-        Task<object> DeleteAsync(string id);
+        ValueTask UpdateAsync(string id, object updateObject);
+
+        ValueTask<IEnumerable<object>> GetCollectionAsync();
+
+        ValueTask DeleteAsync(string id);
     }
 }
