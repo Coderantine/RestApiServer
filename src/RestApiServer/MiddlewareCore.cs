@@ -1,122 +1,69 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
-using System;
-using System.IO;
-using System.Linq;
-using System.Text;
+﻿using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using RestApiServer.Database;
+using RestApiServer.Requests;
+using RestApiServer.Routing;
 
 namespace RestApiServer
 {
-    public class MiddlewareCore<TDbContext> where TDbContext : DbContext
+    internal class MiddlewareCore<TDbContext>
+        where TDbContext : DbContext
     {
         private readonly RequestDelegate _next;
         private readonly RestApiServerOptions _options;
+        private readonly IRestApiServerSource _source;
+        private readonly IRestApiRouteResolver _restApiRouteResolver;
+        private readonly IRestApiRequestHandlerFactory _restApiRequestHandlerFactory;
+        private readonly IDbSetExecutorFactory _dbSetExecutorFactory;
 
         public MiddlewareCore(
             RequestDelegate next,
-            RestApiServerOptions options)
+            RestApiServerOptions options,
+            IRestApiServerSource source,
+            IRestApiRouteResolver restApiRouteResolver,
+            IRestApiRequestHandlerFactory restApiRequestHandlerFactory,
+            IDbSetExecutorFactory dbSetExecutorFactory)
         {
             _next = next;
-            _options = options;
+            _source = source ?? throw new ArgumentNullException(nameof(source));
+            _options = options ?? throw new ArgumentNullException(nameof(options));
+            _restApiRouteResolver = restApiRouteResolver ?? throw new ArgumentNullException(nameof(restApiRouteResolver));
+            _restApiRequestHandlerFactory = restApiRequestHandlerFactory ?? throw new ArgumentNullException(nameof(restApiRequestHandlerFactory));
+            _dbSetExecutorFactory = dbSetExecutorFactory ?? throw new ArgumentNullException(nameof(IDbSetExecutorFactory));
         }
 
         public async Task InvokeAsync(HttpContext context, TDbContext dbContext)
         {
-            if (_options.UsePrefix && !context.Request.Path.StartsWithSegments(_options.Prefix))
+            if (!_restApiRouteResolver.Resolve(context, out var routeParams))
             {
                 await _next(context);
                 return;
             }
 
-            var prefixSegmentsCount = _options.UsePrefix ? _options.Prefix.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries).Length : 0;
-            var pathSegments = GetPathSegments(context.Request, prefixSegmentsCount);
+            var restApiRequestContext = new RestApiRequestContext()
+            {
+                HttpContext = context,
+                DbContext = dbContext,
+                RouteParams = routeParams,
+                Options = _options,
+                Source = _source,
+                DbSetExecutorFactory = _dbSetExecutorFactory,
+            };
 
-            if (pathSegments.Length == 0 || pathSegments.Length > 2)
+            var handler = _restApiRequestHandlerFactory.Create(restApiRequestContext);
+            if (handler == null)
             {
                 await _next(context);
                 return;
             }
 
-            // TODO check for predefined endpoint
-
-            var restSetName = pathSegments[0];
-            string id = null;
-            if (pathSegments.Length == 2)
-            {
-                id = pathSegments[1];
-            }
-
-            var executor = DbSetExecutorFactory.Create(dbContext, restSetName);
-            if (executor == null)
+            if (!await handler.TryHandleAsync(restApiRequestContext))
             {
                 await _next(context);
                 return;
-            }
-
-            switch (context.Request.Method)
-            {
-                case "POST":
-
-                    if (context.Request.ContentType != "application/json")
-                    {
-                        await _next(context);
-                        return;
-                    }
-
-                    using (var reader = new StreamReader(context.Request.Body, Encoding.UTF8))
-                    {
-                        var body = await reader.ReadToEndAsync();
-                        var entity = JsonConvert.DeserializeObject(body, executor.EntityType);
-                        if (entity != null)
-                        {
-                            await executor.CreateAsync(entity);
-                            var json = JsonConvert.SerializeObject(entity);
-                            await context.Response.WriteAsync(json);
-                        }
-
-                    }
-
-                    break;
-                case "GET":
-                    if (id != null)
-                    {
-                        var entity = await executor.GetSingleAsync(id);
-                        if (entity != null)
-                        {
-                            var json = JsonConvert.SerializeObject(entity);
-                            await context.Response.WriteAsync(json);
-                        }
-                        else
-                        {
-                            await _next(context);
-                            return;
-                        }
-                    }
-                    else
-                    {
-                        var entities = await executor.GetCollectionAsync();
-                        if (entities != null)
-                        {
-                            var json = JsonConvert.SerializeObject(entities);
-                            await context.Response.WriteAsync(json);
-                        }
-                        else
-                        {
-                            await _next(context);
-                            return;
-                        }
-                    }
-                    break;
             }
         }
-
-        public static string[] GetPathSegments(HttpRequest request, int prefixSegmentsCount)
-        {
-            var pathSegments = request.Path.ToUriComponent().Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries).Skip(prefixSegmentsCount);
-            return pathSegments.ToArray();
-        }
-
     }
 }

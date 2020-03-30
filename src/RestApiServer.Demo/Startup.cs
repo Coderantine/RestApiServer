@@ -1,4 +1,3 @@
-using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -25,7 +24,7 @@ namespace RestApiServer.Demo
             {
                 options.UseInMemoryDatabase("memmory-db");
             });
-            services.AddRestApiServer();
+            services.AddRestApiServer<DemoDbContext>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -8,7 +8,6 @@ namespace RestApiServer
         public static IApplicationBuilder UseRestApiServer<TDbContext>(this IApplicationBuilder app)
             where TDbContext : DbContext
         {
-            DbContextSchemaSource.Load<TDbContext>();
             app.UseMiddleware<MiddlewareCore<TDbContext>>();
             return app;
         }
