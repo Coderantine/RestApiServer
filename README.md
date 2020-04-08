@@ -78,8 +78,7 @@ Run web application. REST endpoints will be awailable in this pattern:
         "id": 1,
         "name": "John",
         "dateOfBirth": "1995-05-05"
-    },
-    ...
+    }
 ]
 ```
 
