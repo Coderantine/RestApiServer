@@ -1,5 +1,6 @@
 # RestApiServer
-<BUILD_TAGS_HERE>
+[![Build status](https://ci.appveyor.com/api/projects/status/uwt8yymsd9gcv8rt/branch/master?svg=true)](https://ci.appveyor.com/project/arkoc/restapiserver/branch/master)
+
 + [General Information](#general-information)
 + [Setup](#setup)
 + [Usage](#usage)
