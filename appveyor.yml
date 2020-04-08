@@ -11,7 +11,7 @@ test_script:
 - cmd: dotnet test src/RestApiServer.UnitTests/RestApiServer.UnitTests.csproj
 
 artifacts:
-- path: src/RestApiServer/RestApiServer.*.nupkg
+- path: src/RestApiServer/bin/Release/RestApiServer.*.nupkg
 
 deploy:
   provider: NuGet
