@@ -1,5 +1,6 @@
 # RestApiServer
 [![Build status](https://ci.appveyor.com/api/projects/status/uwt8yymsd9gcv8rt/branch/master?svg=true)](https://ci.appveyor.com/project/arkoc/restapiserver/branch/master)
+[![NuGet Badge](https://buildstats.info/nuget/RestApiServer)](https://www.nuget.org/packages/RestApiServer/)
 
 + [General Information](#general-information)
 + [Setup](#setup)
