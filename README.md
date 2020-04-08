@@ -62,17 +62,15 @@ public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 }
 ```
 
-You can find full working [example here](https://github.com/Coderantine/RestApiServer/tree/master/src/RestApiServer.Demo).
+You can find full working example [here](https://github.com/Coderantine/RestApiServer/tree/master/src/RestApiServer.Demo).
 
 ## Usage
 Run web application. REST endpoints will be awailable in this pattern:
 `[HOST]/api/[DBSET_NAME]/[ID]`
 
 #### Get Collection
-##### Http Metod
-`GET`
-##### Endpoint
-`/api/customers`
+`GET` `/api/customers`
+
 ##### Response  
 ```json
 [
