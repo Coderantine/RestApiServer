@@ -5,14 +5,14 @@ image: Visual Studio 2019
 configuration: Release
 
 build_script:
-- cmd: dotnet build /p:Version=$Env:APPVEYOR_BUILD_VERSION -c Release src/RestApiServer/RestApiServer.csproj
+- cmd: dotnet build -c Release src/RestApiServer/RestApiServer.csproj
 
 test_script:
 - cmd: dotnet test src/RestApiServer.UnitTests/RestApiServer.UnitTests.csproj
 
 artifacts:
-- path: '\src\RestApiServer\bin\Release\netcoreapp3.1\publish'
-  
+- path: src/RestApiServer/bin/Release/RestApiServer.*.nupkg
+
 deploy:
   provider: NuGet
   api_key:
