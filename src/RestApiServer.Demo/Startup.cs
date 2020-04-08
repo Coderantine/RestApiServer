@@ -40,7 +40,6 @@ namespace RestApiServer.Demo
             app.UseRouting();
 
             app.UseRestApiServer<DemoDbContext>();
-
         }
     }
 }
