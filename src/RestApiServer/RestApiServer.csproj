@@ -4,7 +4,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <TargetFramework>netstandard2.0</TargetFramework>
     <PackageId>RestApiServer</PackageId>
-    <Version>0.1.0</Version>
+    <Version>0.1.1</Version>
     <Authors>RestApiServer contributors</Authors>
     <Company>Coderantine</Company>
 
