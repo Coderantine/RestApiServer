@@ -9,9 +9,6 @@ build_script:
 
 test_script:
 - cmd: dotnet test src/RestApiServer.UnitTests/RestApiServer.UnitTests.csproj
-
-artifacts:
-- path: '\src\RestApiServer\bin\Release\netcoreapp3.1\publish'
   
 deploy:
   provider: NuGet
