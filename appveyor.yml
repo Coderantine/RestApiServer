@@ -5,7 +5,7 @@ image: Visual Studio 2019
 configuration: Release
 
 build_script:
-- cmd: dotnet build /p:Version=$Env:APPVEYOR_BUILD_VERSION -c Release src/RestApiServer/RestApiServer.csproj
+- cmd: dotnet build -c Release src/RestApiServer/RestApiServer.csproj
 
 test_script:
 - cmd: dotnet test src/RestApiServer.UnitTests/RestApiServer.UnitTests.csproj
