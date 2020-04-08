@@ -9,7 +9,10 @@ build_script:
 
 test_script:
 - cmd: dotnet test src/RestApiServer.UnitTests/RestApiServer.UnitTests.csproj
-  
+
+artifacts:
+- path: src/RestApiServer/RestApiServer.*.nupkg
+
 deploy:
   provider: NuGet
   api_key:
