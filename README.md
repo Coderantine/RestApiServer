@@ -1,9 +1,9 @@
 # RestApiServer
 <BUILD_TAGS_HERE>
-+ [General Information]()
-+ [Setup]()
-+ [Usage]()
-+ [License]()
++ [General Information](#general-information)
++ [Setup](#setup)
++ [Usage](#usage)
++ [License](#license)
 
 ## General Information
 RestApiServer provides simple REST API based on EF DbContext. It is fast and lightweight and also easy to configure.
@@ -38,7 +38,7 @@ public void ConfigureServices(IServiceCollection services)
     });
 ```
 
-4. install nuget package 
+4. Install nuget package 
 ```
 install-package RestApiServer
 ```
@@ -62,6 +62,8 @@ public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 }
 ```
 
+You can find full working [example here](https://github.com/Coderantine/RestApiServer/tree/master/src/RestApiServer.Demo).
+
 ## Usage
 Run web application. REST endpoints will be awailable in this pattern:
 `[HOST]/api/[DBSET_NAME]/[ID]`
@@ -84,10 +86,8 @@ Run web application. REST endpoints will be awailable in this pattern:
 ```
 
 #### Get Signle
-##### Http Metod
-`GET`
-##### Endpoint
-`/api/customers/1`
+`GET` `/api/customers/1`
+
 ##### Response 200 (application/json)
 ```json
 {
@@ -98,10 +98,7 @@ Run web application. REST endpoints will be awailable in this pattern:
 ```
 
 #### Create
-##### Http Metod
-`POST`
-##### Endpoint
-`/api/customers`
+`POST` `/api/customers`
 
 ##### Request (application/json)
 ```json
@@ -121,10 +118,7 @@ Run web application. REST endpoints will be awailable in this pattern:
 ```
 
 #### Update
-##### Http Metod
-`PUT`
-##### Endpoint
-`/api/customers/2`
+`PUT` `/api/customers/2`
 
 ##### Request (application/json)
 ```json
@@ -145,10 +139,7 @@ Run web application. REST endpoints will be awailable in this pattern:
 ```
 
 #### Delete
-##### Http Metod
-`DELETE`
-##### Endpoint
-`/api/customers/2`
+`DELETE` `/api/customers/2`
 
 ##### Response 204
 
