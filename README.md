@@ -27,7 +27,7 @@ public class DemoDbContext : DbContext
     public DbSet<Customer> Customers { get; set; }
 }
 ```
-3. Then configure it in `startup.cs`.
+3. Then configure it in `Startup.cs`.
 
 ```c#
 public void ConfigureServices(IServiceCollection services)
